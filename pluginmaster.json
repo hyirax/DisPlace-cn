@@ -1,0 +1,10 @@
+[
+  {
+    "Name": "DisPlace 插件（简体中文）",
+    "InternalName": "DisPlacePlugin",
+    "Author": "AlmondCookie",
+    "RepoUrl": "https://github.com/hyirax/DisPlace-cn",
+    "DownloadLinkInstall": "https://github.com/hyirax/DisPlace-cn/releases/download/v7.4.0-cn1/DisPlacePlugin_CN.zip",
+    "DalamudApiLevel": 14
+  }
+]

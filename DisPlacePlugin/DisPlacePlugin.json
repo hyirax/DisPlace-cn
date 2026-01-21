@@ -1,17 +1,17 @@
 {
-  "Author": "Drakansoul",
-  "Name": "DisPlace Plugin",
+  "Author": "AlmondCookie",
+  "Name": "DisPlace 插件（简体中文）",
   "InternalName": "DisPlacePlugin",
-  "Description": "Automatically save & load interior and exterior house layouts. Copy other housing layouts. Import/export layouts from the MakePlace program.",
-  "RepoUrl": "https://github.com/Drakansoul/DisPlaced",
+  "Description": "自动保存与应用室内和室外住宅的家具布局。支持复制其他住宅布局，并可从 MakePlace 程序导入或导出布局。本版本为简体中文汉化版。",
+  "RepoUrl": "https://github.com/hyirax/DisPlace-cn",
   "Tags": [
     "makeplace",
     "housing",
     "furniture",
-    "jawslouis",
-    "drakansoul",
-    "displace"
+    "hyirax",
+    "cn",
+    "displacecn"
   ],
-  "IconUrl": "https://raw.githubusercontent.com/Drakansoul/DisPlaced/master/icon.png",
-  "Punchline": "Automatically save & load furniture layouts in your house. Copy layouts from other houses."
+  "IconUrl": "https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/icon.png",
+  "Punchline": "自动保存与应用住宅家具布局，可以复制别人房子的布局。"
 }

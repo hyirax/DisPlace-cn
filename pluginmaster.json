@@ -11,8 +11,8 @@
     "DalamudApiLevel": 14,
     "IsHide": false,
     "IsTestingExclusive": false,
-    "DownloadLinkInstall": "https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/pluginmaster.json",
-    "DownloadLinkUpdate": "https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/pluginmaster.json",
+    "DownloadLinkInstall": "https://github.com/Drakansoul/DisPlaced/releases/download/v7.4.0/DisPlacePlugin.zip",
+    "DownloadLinkUpdate": "https://github.com/Drakansoul/DisPlaced/releases/download/v7.4.0/DisPlacePlugin.zip",
     "IconUrl": "https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/icon.png"
   }
 ]

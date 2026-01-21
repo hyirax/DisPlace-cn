@@ -1,5 +1,0 @@
-- [ ] Add Teamcraft export support
-- [ ] Update windows to use proper classes
-- [ ] Refactor structure
-- [ ] Reverse engineer more of the housing code
-- [ ] Fix apply crash

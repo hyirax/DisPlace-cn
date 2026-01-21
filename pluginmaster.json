@@ -5,7 +5,7 @@
     "Punchline": "自动保存与应用住宅家具布局（简体中文汉化版）",
     "Description": "基于原作者 Drakansoul 的 DisPlace 插件进行简体中文本地化。用于自动保存与应用室内及庭院家具布局，支持 MakePlace 布局导入导出。",
     "InternalName": "DisPlacePlugin",
-    "AssemblyVersion": "7.4.0-cn1",
+    "AssemblyVersion": "7.4.0.0",
     "RepoUrl": "https://github.com/hyirax/DisPlace-cn",
     "ApplicableVersion": "any",
     "DalamudApiLevel": 14,

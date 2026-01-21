@@ -50,7 +50,7 @@ DisPlace 插件可以帮助你：
 4. 找到 **Custom Plugin Repositories（自定义插件仓库）**
 5. 添加以下仓库地址（示例）：
    ```
-   https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/pluginmaster.json
+   https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/DisPlacePlugin.json
    ```
 6. 确认该仓库已启用（Enabled）
 7. 点击 **Save and Close** 保存并关闭设置

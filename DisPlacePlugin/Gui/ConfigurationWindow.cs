@@ -15,7 +15,6 @@ namespace DisPlacePlugin.Gui
 {
     public class ConfigurationWindow : Window<DisPlacePlugin>
     {
-
         public Configuration Config => Plugin.Config;
 
         private string CustomTag = string.Empty;
@@ -49,34 +48,33 @@ namespace DisPlacePlugin.Gui
                     ImGui.PushStyleColor(ImGuiCol.HeaderHovered, PURPLE);
                     ImGui.PushStyleColor(ImGuiCol.HeaderActive, PURPLE);
 
-
-                    if (ImGui.CollapsingHeader("Interior Furniture", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader("室内家具", ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         ImGui.PushID("interior");
                         DrawItemList(Plugin.InteriorItemList);
                         ImGui.PopID();
                     }
-                    if (ImGui.CollapsingHeader("Exterior Furniture", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader("室外家具", ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         ImGui.PushID("exterior");
                         DrawItemList(Plugin.ExteriorItemList);
                         ImGui.PopID();
                     }
 
-                    if (ImGui.CollapsingHeader("Interior Fixtures", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader("室内固定装置", ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         ImGui.PushID("interiorFixture");
                         DrawFixtureList(Plugin.Layout.interiorFixture);
                         ImGui.PopID();
                     }
 
-                    if (ImGui.CollapsingHeader("Exterior Fixtures", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader("室外固定装置", ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         ImGui.PushID("exteriorFixture");
                         DrawFixtureList(Plugin.Layout.exteriorFixture);
                         ImGui.PopID();
                     }
-                    if (ImGui.CollapsingHeader("Unused Furniture", ImGuiTreeNodeFlags.DefaultOpen))
+                    if (ImGui.CollapsingHeader("未使用的家具", ImGuiTreeNodeFlags.DefaultOpen))
                     {
                         ImGui.PushID("unused");
                         DrawItemList(Plugin.UnusedItemList, true);
@@ -122,37 +120,30 @@ namespace DisPlacePlugin.Gui
         {
             if (Memory.Instance.GetCurrentTerritory() == Memory.HousingArea.Island)
             {
-                LogError("(Manage Furnishings -> Place Furnishing Glamours)");
+                LogError("（管理家具 → 放置家具外观）");
             }
             else
             {
-                LogError("(Housing -> Indoor/Outdoor Furnishings)");
+                LogError("（住宅 → 室内/室外家具）");
             }
         }
 
         private bool CheckModeForSave()
         {
-            return true; // LOL, LMAO
-            /*
-            if (Memory.Instance.IsHousingMode()) return true;
-
-            LogError("Unable to save layouts outside of Layout mode");
-            LogLayoutMode();
-            return false;
-            */
+            return true;
         }
 
         private bool CheckModeForLoad()
         {
             if (Config.ApplyLayout && !Memory.Instance.CanEditItem())
             {
-                LogError("Unable to load and apply layouts outside of Rotate Layout mode");
+                LogError("未处于旋转布局模式，无法加载并应用布局");
                 return false;
             }
 
             if (!Config.ApplyLayout && !Memory.Instance.IsHousingMode())
             {
-                LogError("Unable to load layouts outside of Layout mode");
+                LogError("未处于布局模式，无法加载布局");
                 LogLayoutMode();
                 return false;
             }
@@ -174,19 +165,18 @@ namespace DisPlacePlugin.Gui
             }
             catch (Exception e)
             {
-                LogError($"Save Error: {e.Message}", e.StackTrace);
+                LogError($"保存错误：{e.Message}", e.StackTrace);
             }
         }
 
         private void LoadLayoutFromFile()
         {
-
             if (!CheckModeForLoad()) return;
 
             try
             {
                 SaveLayoutManager.ImportLayout(Config.SaveLocation);
-                Log(String.Format("Imported {0} items", Plugin.InteriorItemList.Count + Plugin.ExteriorItemList.Count));
+                Log($"已导入 {Plugin.InteriorItemList.Count + Plugin.ExteriorItemList.Count} 个物品");
 
                 Plugin.MatchLayout();
                 Config.ResetRecord();
@@ -195,170 +185,173 @@ namespace DisPlacePlugin.Gui
                 {
                     Plugin.ApplyLayout();
                 }
-
             }
             catch (Exception e)
             {
-                LogError($"Load Error: {e.Message}", e.StackTrace);
+                LogError($"加载错误：{e.Message}", e.StackTrace);
             }
         }
 
         unsafe private void DrawGeneralSettings()
         {
-
-            if (ImGui.Checkbox("Label Furniture", ref Config.DrawScreen)) Config.Save();
+            if (ImGui.Checkbox("显示家具标签", ref Config.DrawScreen)) Config.Save();
             if (Config.ShowTooltips && ImGui.IsItemHovered())
-                ImGui.SetTooltip("Show furniture names on the screen");
+                ImGui.SetTooltip("在屏幕上显示家具名称");
 
             ImGui.SameLine();
             ImGui.Dummy(new Vector2(10, 0));
             ImGui.SameLine();
             if (ImGui.Checkbox("##hideTooltipsOnOff", ref Config.ShowTooltips)) Config.Save();
             ImGui.SameLine();
-            ImGui.TextUnformatted("Show Tooltips");
+            ImGui.TextUnformatted("显示提示信息");
 
             ImGui.Dummy(new Vector2(0, 10));
 
-
-            ImGui.Text("Layout");
+            ImGui.Text("布局");
 
             if (!Config.SaveLocation.IsNullOrEmpty())
             {
-                ImGui.Text($"Current file location: {Config.SaveLocation}");
+                ImGui.Text($"当前文件路径：{Config.SaveLocation}");
 
-                if (ImGui.Button("Save"))
+                if (ImGui.Button("保存"))
                 {
                     SaveLayoutToFile();
                 }
-                if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("Save layout to current file location");
+                if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("保存布局到当前文件");
                 ImGui.SameLine();
-
             }
 
-            if (ImGui.Button("Save As"))
+            if (ImGui.Button("另存为"))
             {
                 if (CheckModeForSave())
                 {
                     string saveName = "save";
-                    if (!Config.SaveLocation.IsNullOrEmpty()) saveName = Path.GetFileNameWithoutExtension(Config.SaveLocation);
+                    if (!Config.SaveLocation.IsNullOrEmpty())
+                        saveName = Path.GetFileNameWithoutExtension(Config.SaveLocation);
 
-                    FileDialogManager.SaveFileDialog("Select a Save Location", ".json", saveName, "json", (bool ok, string res) =>
-                    {
-                        if (!ok)
+                    FileDialogManager.SaveFileDialog(
+                        "选择保存位置",
+                        ".json",
+                        saveName,
+                        "json",
+                        (bool ok, string res) =>
                         {
-                            return;
-                        }
-
-                        Config.SaveLocation = res;
-                        Config.Save();
-                        SaveLayoutToFile();
-
-                    }, Path.GetDirectoryName(Config.SaveLocation));
+                            if (!ok) return;
+                            Config.SaveLocation = res;
+                            Config.Save();
+                            SaveLayoutToFile();
+                        },
+                        Path.GetDirectoryName(Config.SaveLocation)
+                    );
                 }
             }
-            if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("Save layout to file");
+            if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("保存布局到文件");
 
-            ImGui.SameLine(); ImGui.Dummy(new Vector2(20, 0)); ImGui.SameLine();
+            ImGui.SameLine();
+            ImGui.Dummy(new Vector2(20, 0));
+            ImGui.SameLine();
 
             if (!Config.SaveLocation.IsNullOrEmpty())
             {
-                if (ImGui.Button("Load"))
+                if (ImGui.Button("加载"))
                 {
                     LoadLayoutFromFile();
                 }
-                if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("Load layout from current file location");
+                if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("从当前文件加载布局");
                 ImGui.SameLine();
             }
 
-            if (ImGui.Button("Load From"))
+            if (ImGui.Button("从文件加载"))
             {
                 if (CheckModeForLoad())
                 {
-                    string saveName = "save";
-                    if (!Config.SaveLocation.IsNullOrEmpty()) saveName = Path.GetFileNameWithoutExtension(Config.SaveLocation);
-
-                    FileDialogManager.OpenFileDialog("Select a Layout File", ".json", (bool ok, List<string> res) =>
-                    {
-                        if (!ok)
+                    FileDialogManager.OpenFileDialog(
+                        "选择布局文件",
+                        ".json",
+                        (bool ok, List<string> res) =>
                         {
-                            return;
-                        }
-
-                        Config.SaveLocation = res.FirstOrDefault("");
-                        Config.Save();
-
-                        LoadLayoutFromFile();
-
-                    }, 1, Path.GetDirectoryName(Config.SaveLocation));
+                            if (!ok) return;
+                            Config.SaveLocation = res.FirstOrDefault("");
+                            Config.Save();
+                            LoadLayoutFromFile();
+                        },
+                        1,
+                        Path.GetDirectoryName(Config.SaveLocation)
+                    );
                 }
             }
-            if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("Load layout from file");
+            if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("从文件加载布局");
 
-            ImGui.SameLine(); ImGui.Dummy(new Vector2(10, 0)); ImGui.SameLine();
+            ImGui.SameLine();
+            ImGui.Dummy(new Vector2(10, 0));
+            ImGui.SameLine();
 
-            if (ImGui.Checkbox("Apply Layout", ref Config.ApplyLayout))
+            if (ImGui.Checkbox("应用布局", ref Config.ApplyLayout))
             {
                 Config.Save();
             }
 
-            ImGui.SameLine(); ImGui.Dummy(new Vector2(10, 0)); ImGui.SameLine();
+            ImGui.SameLine();
+            ImGui.Dummy(new Vector2(10, 0));
+            ImGui.SameLine();
 
             ImGui.PushItemWidth(100);
-            if (ImGui.InputInt("Placement Interval (ms)", ref Config.LoadInterval))
+            if (ImGui.InputInt("放置间隔（毫秒）", ref Config.LoadInterval))
             {
                 Config.Save();
             }
             ImGui.PopItemWidth();
-            if (Config.ShowTooltips && ImGui.IsItemHovered()) ImGui.SetTooltip("Time interval between furniture placements when applying a layout. If this is too low (e.g. 200 ms), some placements may be skipped over.");
+            if (Config.ShowTooltips && ImGui.IsItemHovered())
+                ImGui.SetTooltip("应用布局时家具放置的时间间隔，数值过低可能会跳过部分家具");
 
             ImGui.Dummy(new Vector2(0, 15));
 
-            bool hasFloors = Memory.Instance.GetCurrentTerritory() == Memory.HousingArea.Indoors && !Memory.Instance.GetIndoorHouseSize().Equals("Apartment");
+            bool hasFloors =
+                Memory.Instance.GetCurrentTerritory() == Memory.HousingArea.Indoors &&
+                !Memory.Instance.GetIndoorHouseSize().Equals("Apartment");
 
             if (hasFloors)
             {
+                ImGui.Text("选择的楼层");
 
-                ImGui.Text("Selected Floors");
-
-                if (ImGui.Checkbox("Basement", ref Config.Basement))
-                {
-                    Config.Save();
-                }
+                if (ImGui.Checkbox("地下室", ref Config.Basement)) Config.Save();
                 ImGui.SameLine(); ImGui.Dummy(new Vector2(10, 0)); ImGui.SameLine();
 
-                if (ImGui.Checkbox("Ground Floor", ref Config.GroundFloor))
-                {
-                    Config.Save();
-                }
+                if (ImGui.Checkbox("一层", ref Config.GroundFloor)) Config.Save();
                 ImGui.SameLine(); ImGui.Dummy(new Vector2(10, 0)); ImGui.SameLine();
 
-                if (Memory.Instance.HasUpperFloor() && ImGui.Checkbox("Upper Floor", ref Config.UpperFloor))
+                if (Memory.Instance.HasUpperFloor() &&
+                    ImGui.Checkbox("二层", ref Config.UpperFloor))
                 {
                     Config.Save();
                 }
 
                 ImGui.Dummy(new Vector2(0, 15));
-
             }
 
             ImGui.Dummy(new Vector2(0, 15));
-
         }
 
         private void DrawRow(int i, HousingItem housingItem, bool showSetPosition = true, int childIndex = -1)
         {
-            if (!housingItem.CorrectLocation) ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
-            ImGui.Text($"{housingItem.X:N4}, {housingItem.Y:N4}, {housingItem.Z:N4}");
-            if (!housingItem.CorrectLocation) ImGui.PopStyleColor();
+            if (!housingItem.CorrectLocation)
+                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
 
+            ImGui.Text($"{housingItem.X:N4}, {housingItem.Y:N4}, {housingItem.Z:N4}");
+
+            if (!housingItem.CorrectLocation)
+                ImGui.PopStyleColor();
 
             ImGui.NextColumn();
 
-            if (!housingItem.CorrectRotation) ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
-            ImGui.Text($"{housingItem.Rotate:N3}"); ImGui.NextColumn();
-            if (!housingItem.CorrectRotation) ImGui.PopStyleColor();
+            if (!housingItem.CorrectRotation)
+                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
 
+            ImGui.Text($"{housingItem.Rotate:N3}");
+            ImGui.NextColumn();
 
+            if (!housingItem.CorrectRotation)
+                ImGui.PopStyleColor();
 
             var stain = DalamudApi.DataManager.GetExcelSheet<Stain>().GetRow(housingItem.Stain);
             var colorName = stain.Name;
@@ -368,39 +361,41 @@ namespace DisPlacePlugin.Gui
                 Utils.StainButton("dye_" + i, stain, new Vector2(20));
                 ImGui.SameLine();
 
-                if (!housingItem.DyeMatch) ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
+                if (!housingItem.DyeMatch)
+                    ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
 
                 ImGui.Text($"{colorName}");
 
-                if (!housingItem.DyeMatch) ImGui.PopStyleColor();
-
+                if (!housingItem.DyeMatch)
+                    ImGui.PopStyleColor();
             }
             else if (housingItem.MaterialItemKey != 0)
             {
                 var item = DalamudApi.DataManager.GetExcelSheet<Item>().GetRow(housingItem.MaterialItemKey);
                 if (!item.Equals(null))
                 {
-                    if (!housingItem.DyeMatch) ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
+                    if (!housingItem.DyeMatch)
+                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.5f, 0.5f, 0.5f, 1));
 
                     DrawIcon(item.Icon, new Vector2(20, 20));
                     ImGui.SameLine();
                     ImGui.Text(item.Name.ToString());
 
-                    if (!housingItem.DyeMatch) ImGui.PopStyleColor();
+                    if (!housingItem.DyeMatch)
+                        ImGui.PopStyleColor();
                 }
-
             }
             ImGui.NextColumn();
 
             if (showSetPosition)
             {
-                string uniqueID = childIndex == -1 ? i.ToString() : i.ToString() + "_" + childIndex.ToString();
+                string uniqueID = childIndex == -1 ? i.ToString() : i + "_" + childIndex;
 
                 bool noMatch = housingItem.ItemStruct == IntPtr.Zero;
 
                 if (!noMatch)
                 {
-                    if (ImGui.Button("Set" + "##" + uniqueID))
+                    if (ImGui.Button("设置##" + uniqueID))
                     {
                         Plugin.MatchLayout();
 
@@ -410,22 +405,20 @@ namespace DisPlacePlugin.Gui
                         }
                         else
                         {
-                            LogError($"Unable to set position for {housingItem.Name}");
+                            LogError($"无法设置 {housingItem.Name} 的位置");
                         }
                     }
                 }
 
                 ImGui.NextColumn();
             }
-
-
         }
 
         private void DrawFixtureList(List<Fixture> fixtureList)
         {
             try
             {
-                if (ImGui.Button("Clear"))
+                if (ImGui.Button("清空"))
                 {
                     fixtureList.Clear();
                     Config.Save();
@@ -434,9 +427,9 @@ namespace DisPlacePlugin.Gui
                 ImGui.Columns(3, "FixtureList", true);
                 ImGui.Separator();
 
-                ImGui.Text("Level"); ImGui.NextColumn();
-                ImGui.Text("Fixture"); ImGui.NextColumn();
-                ImGui.Text("Item"); ImGui.NextColumn();
+                ImGui.Text("楼层"); ImGui.NextColumn();
+                ImGui.Text("固定装置"); ImGui.NextColumn();
+                ImGui.Text("物品"); ImGui.NextColumn();
 
                 ImGui.Separator();
 
@@ -444,7 +437,6 @@ namespace DisPlacePlugin.Gui
                 {
                     ImGui.Text(fixture.level); ImGui.NextColumn();
                     ImGui.Text(fixture.type); ImGui.NextColumn();
-
 
                     var item = DalamudApi.DataManager.GetExcelSheet<Item>().GetRow(fixture.itemId);
                     if (!item.Equals(null))
@@ -458,21 +450,16 @@ namespace DisPlacePlugin.Gui
                 }
 
                 ImGui.Columns(1);
-
             }
             catch (Exception e)
             {
                 LogError(e.Message, e.StackTrace);
             }
-
         }
 
         private void DrawItemList(List<HousingItem> itemList, bool isUnused = false)
         {
-
-
-
-            if (ImGui.Button("Sort"))
+            if (ImGui.Button("排序"))
             {
                 itemList.Sort((x, y) =>
                 {
@@ -490,8 +477,9 @@ namespace DisPlacePlugin.Gui
                 });
                 Config.Save();
             }
+
             ImGui.SameLine();
-            if (ImGui.Button("Clear"))
+            if (ImGui.Button("清空"))
             {
                 itemList.Clear();
                 Config.Save();
@@ -500,26 +488,27 @@ namespace DisPlacePlugin.Gui
             if (!isUnused)
             {
                 ImGui.SameLine();
-                ImGui.Text("Note: Missing items, incorrect dyes, and items on unselected floors are grayed out");
+                ImGui.Text("注：缺失的物品、染色不匹配的物品，以及不在所选楼层的物品将显示为灰色");
             }
 
-            // name, position, r, color, set
             int columns = isUnused ? 4 : 5;
-
 
             ImGui.Columns(columns, "ItemList", true);
             ImGui.Separator();
-            ImGui.Text("Item"); ImGui.NextColumn();
-            ImGui.Text("Position (X,Y,Z)"); ImGui.NextColumn();
-            ImGui.Text("Rotation"); ImGui.NextColumn();
-            ImGui.Text("Dye/Material"); ImGui.NextColumn();
+
+            ImGui.Text("物品"); ImGui.NextColumn();
+            ImGui.Text("坐标 (X,Y,Z)"); ImGui.NextColumn();
+            ImGui.Text("旋转"); ImGui.NextColumn();
+            ImGui.Text("染色 / 材质"); ImGui.NextColumn();
 
             if (!isUnused)
             {
-                ImGui.Text("Set Position"); ImGui.NextColumn();
+                ImGui.Text("设置位置");
+                ImGui.NextColumn();
             }
 
             ImGui.Separator();
+
             for (int i = 0; i < itemList.Count(); i++)
             {
                 var housingItem = itemList[i];
@@ -539,8 +528,6 @@ namespace DisPlacePlugin.Gui
 
                 ImGui.Text(displayName);
 
-
-
                 ImGui.NextColumn();
                 DrawRow(i, housingItem, !isUnused);
 
@@ -553,13 +540,12 @@ namespace DisPlacePlugin.Gui
             }
 
             ImGui.Columns(1);
-
         }
 
         #endregion
 
-
         #region Draw Screen
+
         protected override void DrawScreen()
         {
             if (Config.DrawScreen)
@@ -570,10 +556,12 @@ namespace DisPlacePlugin.Gui
 
         private unsafe void DrawItemOnScreen()
         {
-
             if (Memory.Instance == null) return;
 
-            var itemList = Memory.Instance.GetCurrentTerritory() == Memory.HousingArea.Indoors ? Plugin.InteriorItemList : Plugin.ExteriorItemList;
+            var itemList =
+                Memory.Instance.GetCurrentTerritory() == Memory.HousingArea.Indoors
+                    ? Plugin.InteriorItemList
+                    : Plugin.ExteriorItemList;
 
             for (int i = 0; i < itemList.Count(); i++)
             {
@@ -583,33 +571,44 @@ namespace DisPlacePlugin.Gui
                 if (housingItem.ItemStruct == IntPtr.Zero) continue;
 
                 var itemStruct = (HousingItemStruct*)housingItem.ItemStruct;
+                var itemPos = new Vector3(
+                    itemStruct->Position.X,
+                    itemStruct->Position.Y,
+                    itemStruct->Position.Z
+                );
 
-                var itemPos = new Vector3(itemStruct->Position.X, itemStruct->Position.Y, itemStruct->Position.Z);
                 if (Config.HiddenScreenItemHistory.IndexOf(i) >= 0) continue;
-                if (Config.DrawDistance > 0 && (playerPos - itemPos).Length() > Config.DrawDistance)
+                if (Config.DrawDistance > 0 &&
+                    (playerPos - itemPos).Length() > Config.DrawDistance)
                     continue;
+
                 var displayName = housingItem.Name;
+
                 if (DalamudApi.GameGui.WorldToScreen(itemPos, out var screenCoords))
                 {
                     ImGui.PushID("HousingItemWindow" + i);
                     ImGui.SetNextWindowPos(new Vector2(screenCoords.X, screenCoords.Y));
                     ImGui.SetNextWindowBgAlpha(0.8f);
-                    if (ImGui.Begin("HousingItem" + i,
+
+                    if (ImGui.Begin(
+                        "HousingItem" + i,
                         ImGuiWindowFlags.NoDecoration |
                         ImGuiWindowFlags.AlwaysAutoResize |
-                        ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoMove |
-                        ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoNav))
+                        ImGuiWindowFlags.NoSavedSettings |
+                        ImGuiWindowFlags.NoMove |
+                        ImGuiWindowFlags.NoFocusOnAppearing |
+                        ImGuiWindowFlags.NoNav))
                     {
-
                         ImGui.Text(displayName);
-
                         ImGui.SameLine();
 
-                        if (ImGui.Button("Set" + "##ScreenItem" + i.ToString()))
+                        if (ImGui.Button("设置##ScreenItem" + i))
                         {
                             if (!Memory.Instance.CanEditItem())
                             {
-                                LogError("Unable to set position while not in rotate layout mode");
+                                LogError("未处于旋转布局模式，无法设置位置");
+                                ImGui.End();
+                                ImGui.PopID();
                                 continue;
                             }
 
@@ -618,8 +617,6 @@ namespace DisPlacePlugin.Gui
                             Config.Save();
                         }
 
-                        ImGui.SameLine();
-
                         ImGui.End();
                     }
 
@@ -627,11 +624,7 @@ namespace DisPlacePlugin.Gui
                 }
             }
         }
+
         #endregion
-
-
-
-
-
     }
 }

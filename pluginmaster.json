@@ -1,10 +1,18 @@
 [
   {
-    "Name": "DisPlace 插件（简体中文）",
-    "InternalName": "DisPlacePlugin",
     "Author": "AlmondCookie",
+    "Name": "DisPlace 插件（简体中文）",
+    "Punchline": "自动保存与应用住宅家具布局（简体中文汉化版）",
+    "Description": "基于原作者 Drakansoul 的 DisPlace 插件进行简体中文本地化。用于自动保存与应用室内及庭院家具布局，支持 MakePlace 布局导入导出。",
+    "InternalName": "DisPlacePluginCN",
+    "AssemblyVersion": "7.4.0-cn1",
     "RepoUrl": "https://github.com/hyirax/DisPlace-cn",
-    "DownloadLinkInstall": "https://github.com/hyirax/DisPlace-cn/releases/download/v7.4.0-cn1/DisPlacePlugin_CN.zip",
-    "DalamudApiLevel": 14
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 14,
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "DownloadLinkInstall": "https://github.com/hyirax/DisPlace-cn/releases/download/v7.4.0-cn1/DisPlacePluginCN.zip",
+    "DownloadLinkUpdate": "https://github.com/hyirax/DisPlace-cn/releases/download/v7.4.0-cn1/DisPlacePluginCN.zip",
+    "IconUrl": "https://raw.githubusercontent.com/hyirax/DisPlace-cn/master/icon.png"
   }
 ]
